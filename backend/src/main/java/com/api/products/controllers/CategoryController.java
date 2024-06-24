@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/categories")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CategoryController {
     @Autowired
     private CategoryService service;
@@ -44,5 +45,11 @@ public class CategoryController {
     public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category category) {
         Category updatedCategory = service.update(id, category);
         return ResponseEntity.ok(updatedCategory);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Category>> findByName(@RequestParam String name) {
+        List<Category> categories = service.findByName(name);
+        return ResponseEntity.ok(categories);
     }
 }

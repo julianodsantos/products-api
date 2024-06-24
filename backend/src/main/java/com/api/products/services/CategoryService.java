@@ -39,8 +39,13 @@ public class CategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
 
         currentCategory.setDescription(category.getDescription());
+        currentCategory.setName(category.getName());
 
         return repository.save(currentCategory);
+    }
+
+    public List<Category> findByName(String name) {
+        return repository.findByDescriptionContainingIgnoreCase(name);
     }
 }
 
