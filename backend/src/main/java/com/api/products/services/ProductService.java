@@ -41,7 +41,7 @@ public class ProductService {
         currentProduct.setDescription(product.getDescription());
         currentProduct.setName(product.getName());
         currentProduct.setPrice(product.getPrice());
-        currentProduct.setQuantity(product.getQuantity());
+        currentProduct.setStockQuantity(product.getStockQuantity());
         currentProduct.setCategory(product.getCategory());
 
         return repository.save(currentProduct);

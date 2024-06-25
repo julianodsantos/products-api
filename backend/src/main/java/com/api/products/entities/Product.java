@@ -22,8 +22,8 @@ public class Product {
     @Column(name = "price")
     private BigDecimal price;
 
-    @Column(name = "quantity")
-    private Integer quantity;
+    @Column(name = "stockQuantity")
+    private Integer stockQuantity;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
@@ -56,12 +56,12 @@ public class Product {
         this.price = price;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public Integer getStockQuantity() {
+        return stockQuantity;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setStockQuantity(Integer stockQuantity) {
+        this.stockQuantity = stockQuantity;
     }
 
     public Category getCategory() {

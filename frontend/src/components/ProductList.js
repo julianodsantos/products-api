@@ -7,27 +7,27 @@ import {
 const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
     const [editMode, setEditMode] = useState(null);
     const [editedProduct, setEditedProduct] = useState({
-        id: null, name: '', description: '', price: '', quantity: '', categoryId: ''
+        id: null, name: '', description: '', price: '', stockQuantity: '', category: null
     });
 
     const handleEdit = (product) => {
         setEditMode(product.id);
-        setEditedProduct({ ...product, categoryId: product.category.id });
+        setEditedProduct({ ...product, category: product.category });
     };
 
     const cancelEdit = () => {
         setEditMode(null);
-        setEditedProduct({ id: null, name: '', description: '', price: '', quantity: '', categoryId: '' });
+        setEditedProduct({ id: null, name: '', description: '', price: '', stockQuantity: '', category: null });
     };
 
     const saveEdit = async () => {
         try {
-            const { id, name, description, price, quantity, categoryId } = editedProduct;
+            const { id, name, description, price, stockQuantity, category } = editedProduct;
             await axios.put(`http://localhost:8080/products/${id}`, {
-                id, name, description, price, quantity, category: { id: categoryId }
+                id, name, description, price, stockQuantity, category
             });
             setEditMode(null);
-            setEditedProduct({ id: null, name: '', description: '', price: '', quantity: '', categoryId: '' });
+            setEditedProduct({ id: null, name: '', description: '', price: '', stockQuantity: '', category: null });
             onUpdateProduct(); // Atualiza a lista após a edição
         } catch (error) {
             console.error('Error updating product:', error);
@@ -36,7 +36,12 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditedProduct({ ...editedProduct, [name]: value });
+        if (name === 'categoryId') {
+            const selectedCategory = categories.find(category => category.id === parseInt(value));
+            setEditedProduct({ ...editedProduct, category: selectedCategory });
+        } else {
+            setEditedProduct({ ...editedProduct, [name]: value });
+        }
     };
 
     return (
@@ -81,8 +86,8 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
                                     </TableCell>
                                     <TableCell>
                                         <TextField
-                                            name="quantity"
-                                            value={editedProduct.quantity}
+                                            name="stockQuantity"
+                                            value={editedProduct.stockQuantity}
                                             onChange={handleChange}
                                             type="number"
                                         />
@@ -90,17 +95,13 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
                                     <TableCell>
                                         <TextField
                                             name="categoryId"
-                                            value={editedProduct.categoryId}
+                                            value={editedProduct.category?.id || ''}
                                             onChange={handleChange}
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <Button onClick={saveEdit} variant="contained" color="primary" style={{ marginRight: '10px' }}>
-                                            Save
-                                        </Button>
-                                        <Button onClick={cancelEdit} variant="contained" color="secondary">
-                                            Cancel
-                                        </Button>
+                                        <Button onClick={saveEdit}>Save</Button>
+                                        <Button onClick={cancelEdit}>Cancel</Button>
                                     </TableCell>
                                 </>
                             ) : (
@@ -108,15 +109,11 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
                                     <TableCell>{product.name}</TableCell>
                                     <TableCell>{product.description}</TableCell>
                                     <TableCell>{product.price}</TableCell>
-                                    <TableCell>{product.quantity}</TableCell>
-                                    <TableCell>{`${product.category.id} - ${product.category.name}`}</TableCell>
+                                    <TableCell>{product.stockQuantity}</TableCell>
+                                    <TableCell>{product.category?.name}</TableCell>
                                     <TableCell>
-                                        <Button onClick={() => handleEdit(product)} style={{ marginRight: '10px' }}>
-                                            Edit
-                                        </Button>
-                                        <Button onClick={() => onDeleteProduct(product.id)} color="secondary">
-                                            Delete
-                                        </Button>
+                                        <Button onClick={() => handleEdit(product)}>Edit</Button>
+                                        <Button onClick={() => onDeleteProduct(product.id)}>Delete</Button>
                                     </TableCell>
                                 </>
                             )}
